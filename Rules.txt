@@ -1,2 +1,2 @@
-TiempoExterior
-nublado
+TiempoExterior,Temperatura,Humedad,Viento
+lluvioso,frio,normal,falso
