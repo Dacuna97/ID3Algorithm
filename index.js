@@ -1,5 +1,7 @@
 "use strict"
-
+var attributes = "";
+var data = "";
+var example = "";
 class Node {
 
     constructor(value) {
@@ -110,8 +112,7 @@ class Merit {
 
 }
 
-var attributes = "";
-var data = "";
+
 
 function mostrarContenido(contenido, id) {
     $("#" + id).text(contenido);
@@ -238,6 +239,30 @@ function show(node) {
     return contenido;
 }
 
+function mapExample(sol){
+    let example_divide = example.split('\n');
+    let attributes = example_divide[0].split(',');
+    let rules = example_divide[1].split(',');
+    alert(checkRules(sol, attributes, rules));
+}
+function checkRules(sol, attributes, rules){
+    if(sol.value == "si" || sol.value == "no"){
+        return sol.value;
+    }
+    let solution = "not found";
+    attributes.forEach((element,index) => {
+        if(element === sol.value){
+            attributes.splice(index, 1);
+            sol.getChildren().forEach(child => {
+                if(child.edge_tag === rules[index]){
+                    rules.splice(index, 1);
+                    solution = checkRules(child, attributes, rules );
+                }
+            });
+        }
+    });
+    return solution;
+}
 function main() {
 
     let attributes_list = attributes.split(',');
@@ -258,8 +283,19 @@ function main() {
     let sol = algorithm(data_matrix, attributes_list, data_matrix.length - 1);
     let sol_content = show(sol);
     mostrarContenido(sol_content, "solucion");
-
-}
+    $("#file-input").on("change", (e) => {
+        var archivo = e.target.files[0];
+        if (!archivo) {
+            return;
+        }
+        var lector = new FileReader();
+        lector.onload = function (e) {
+            example = e.target.result;
+            mapExample(sol);
+        }
+        lector.readAsText(archivo);
+    });
+};
 
 $(() => {
     let contador = 0;
